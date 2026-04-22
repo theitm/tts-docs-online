@@ -41,10 +41,12 @@ export async function POST(req) {
     });
 
   } catch (error) {
-    console.error('Lỗi API TTS:', error);
+    console.error('[TTS API ERROR]:', error);
     return NextResponse.json({ 
-      error: 'Lỗi khi xử lý TTS', 
-      details: error.message 
+      error: 'Lỗi tại Server khi xử lý TTS', 
+      details: error.message,
+      stack: error.stack,
+      type: error.name
     }, { status: 500 });
   } finally {
     // Xóa file tạm sau khi đã gửi đi
