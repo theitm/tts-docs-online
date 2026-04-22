@@ -1,54 +1,7 @@
 import { NextResponse } from 'next/server';
 import { EdgeTTS } from 'node-edge-tts';
-import fs from 'fs/promises';
-import path from 'path';
-import os from 'os';
 
 export const maxDuration = 300; 
-
-// Hàm splitText chuẩn từ ứng dụng gốc (MaxLength = 2000 + cơ chế gộp)
-function splitText(text, maxLength = 2000) {
-  const chunks = [];
-  const paragraphs = text.split('\n');
-  for (let p of paragraphs) {
-    p = p.trim();
-    if (!p) continue;
-    if (p.length <= maxLength) {
-      chunks.push(p);
-    } else {
-      const sentences = p.match(/[^.!?]+[.!?]+/g) || [p];
-      let current = '';
-      for (let s of sentences) {
-        s = s.trim();
-        if (!s) continue;
-        if ((current.length + s.length) <= maxLength) {
-          current += (current ? ' ' : '') + s;
-        } else {
-          if (current) chunks.push(current);
-          while (s.length > maxLength) {
-            chunks.push(s.substring(0, maxLength));
-            s = s.substring(maxLength);
-          }
-          current = s;
-        }
-      }
-      if (current) chunks.push(current);
-    }
-  }
-  
-  const merged = [];
-  let current = '';
-  for (const c of chunks) {
-    if (current.length + c.length + 1 <= maxLength) {
-      current += (current ? '\n' : '') + c;
-    } else {
-      if (current) merged.push(current);
-      current = c;
-    }
-  }
-  if (current) merged.push(current);
-  return merged;
-}
 
 export async function POST(req) {
   try {
@@ -59,19 +12,26 @@ export async function POST(req) {
     }
 
     const tts = new EdgeTTS({
-        },
-      });
-    } finally {
-      for (const file of tempFiles) {
-        fs.unlink(file).catch(() => {});
-      }
-    }
+      voice: voice,
+      lang: 'vi-VN',
+      outputFormat: 'audio-24khz-48kbitrate-mono-mp3',
+      rate: rate,
+    });
+
+    const audioBuffer = await tts.toAudio(text);
     
-  } catch (err) {
-    console.error('[TTS API] Error:', err);
+    return new NextResponse(audioBuffer, {
+      headers: {
+        'Content-Type': 'audio/mpeg',
+        'Content-Length': audioBuffer.length.toString(),
+      },
+    });
+
+  } catch (error) {
+    console.error('Lỗi API TTS:', error);
     return NextResponse.json({ 
-      error: 'Lỗi khi chuyển đổi', 
-      details: err instanceof Error ? err.message : String(err)
+      error: 'Lỗi khi xử lý TTS', 
+      details: error.message 
     }, { status: 500 });
   }
 }
