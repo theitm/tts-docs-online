@@ -586,6 +586,10 @@ export default function Home() {
             >
               {isProcessing ? 'ĐANG XỬ LÝ...' : '🎙️ CHUYỂN AUDIO'}
             </button>
+            
+            <div style={{ textAlign: 'center', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+              Phiên bản: <span style={{ color: 'var(--primary)', fontWeight: '600' }}>v1.1.0</span>
+            </div>
           </div>
         </div>
       </aside>
