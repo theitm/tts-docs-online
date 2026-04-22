@@ -203,7 +203,8 @@ export default function Home() {
         
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.details || data.error || `Lỗi ở phần ${i+1}`);
+          // Trả về một chuỗi chứa đầy đủ thông tin để hiển thị
+          throw new Error(`[${data.type || 'Error'}] ${data.error}: ${data.details || 'Không có chi tiết'}`);
         }
         
         const blob = await res.blob();
@@ -588,7 +589,7 @@ export default function Home() {
             </button>
             
             <div style={{ textAlign: 'center', fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-              Phiên bản: <span style={{ color: 'var(--primary)', fontWeight: '600' }}>v1.1.0</span>
+              Phiên bản: <span style={{ color: 'var(--primary)', fontWeight: '600' }}>v1.1.2</span>
             </div>
           </div>
         </div>
