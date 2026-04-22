@@ -56,4 +56,4 @@ Dự án đã được cấu hình tối ưu cho Vercel Free. Để deploy:
 Mọi ý kiến đóng góp và báo lỗi vui lòng mở Issue hoặc gửi Pull Request.
 
 ---
-Phát triển bởi **Antigravity** & **theitm**.
+Phát triển bởi nthquan.
